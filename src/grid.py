@@ -22,8 +22,8 @@ class Grid(object):
             Sec((row, col), baseX + col * size, baseY + row * size) for col in range(cols + 1)
         ] for row in range(rows + 1)]
     
-    def getSecsByDistance(self, base: tuple, distance: float) -> list:
-        return [sec for sec in flatten(self.secs) if distance(base, sec.pos) < distance]
+    def getSecsByDistance(self, base: tuple, dis: float) -> list:
+        return [sec for sec in flatten(self.secs) if distance(base, sec.pos) < dis]
     
     def getLotsByDistance(self, base: tuple, minDis: float, maxDis: float) -> deque:
         lotList = [(lot, d) for lot in flatten(self.lots) if minDis < (d := distance(base, lot.center)) < maxDis]
@@ -33,8 +33,8 @@ class Grid(object):
     def getNearestLot(self, base: tuple) -> Lot:
         return min([(lot, distance(base, lot.center)) for lot in flatten(self.lots)], key=lambda x: x[1])[0]
     
-    def getRoadsByDistance(self, base: tuple, distance: float) -> list:
-        secList = [sec for sec in flatten(self.secs) if distance(base, sec.pos) < distance]
+    def getRoadsByDistance(self, base: tuple, dis: float) -> list:
+        secList = [sec for sec in flatten(self.secs) if distance(base, sec.pos) < dis]
         return [(secA, secB) for secA in secList for secB in secList]
 
     def keepSecsConsistent(self) -> None:
