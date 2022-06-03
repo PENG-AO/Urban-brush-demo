@@ -49,7 +49,7 @@ class Lot(object):
         x, y = self.info.x, self.info.y
         size = Lot.LOT_SIZE
         # build list
-        roadList = []
+        roadList = list()
         if state := self.grid.isRoad(id, 'e'):
             roadList.append(((x + size - 1, y, x + size - 1, y + size - 1), state == Sec.FOCUSED))
         if state := self.grid.isRoad(id, 'n'):
@@ -119,13 +119,13 @@ class Lot(object):
             (x + size - margin - 1, y + margin, self.buildingHeight)
         ]
 
-    def bodyMesh(self, viewAngle: float, center: tuple) -> list:
-        # build mesh list
-        meshes = [
-            self.leftMesh, self.rightMesh,
-            self.frontMesh, self.backMesh,
-            self.topMesh
-        ]
+    def mesh(self, viewAngle: float, center: tuple, showLot: bool, showRoad: bool) -> list:
+        # build mesh lists
+        meshes = list()
+        if showLot: meshes.extend([self.leftMesh, self.rightMesh, self.frontMesh, self.backMesh, self.topMesh])
+        if showRoad: meshes.extend([[
+            (x1, y1, 0), (x1, y1, 0), (x2, y2, 0), (x2, y2, 0)
+        ] for (x1, y1, x2, y2), _ in self.roadRect])
         # rotate around center
         transAway = buildTranslationMat4(-center[0], -center[1], 0)
         rotate = buildRotationMat4(-viewAngle)

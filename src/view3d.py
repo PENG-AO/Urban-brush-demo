@@ -45,11 +45,11 @@ class View3d(object):
         rows, cols = self.master.LOT_ROWS, self.master.LOT_COLS
         for row, col in ((i, j) for i in range(rows) for j in range(cols)):
             lot = self.master.grid.lots[row][col]
-            bodyMesh = [[
+            mesh = [[
                 project.dot(trans.dot(switchYZ.dot(v))) for v in surface
-            ] for surface in lot.bodyMesh(
-                View3d.VIEW_ANGLE,
-                (View3d.CANVAS_W // 2, View3d.CANVAS_H // 2)
+            ] for surface in lot.mesh(
+                View3d.VIEW_ANGLE, (View3d.CANVAS_W // 2, View3d.CANVAS_H // 2),
+                self.master.showLot.get(), self.master.showRoad.get()
             )]
             # project back to canvas
             meshes.extend([(
@@ -59,7 +59,7 @@ class View3d(object):
                 ) for (x, y, _, w) in surface],
                 sum(z / w for (_, _, z, w) in surface) / len(surface),
                 lot.population, lot.color
-            ) for surface in bodyMesh])
+            ) for surface in mesh])
         # render
         meshes.sort(key=lambda x: x[1])
         for (v1, v2, v3, v4), _, population, color in meshes:
