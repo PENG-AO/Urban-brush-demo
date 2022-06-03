@@ -66,8 +66,10 @@ I implemented 5 brushes in the demo and made some simplifications.
 
 ### 3.3.3 simplifications
 
-- the city layout is expressed by a 2d matrix
+Treat the city layout as a 2d grid:
 - the terrain is simply a plain (no mountains and rivers)
-- every lot takes up exactly one square unit
-- every lot only holds population as its attributes (job removed)
+- roads are limited to horizontal and vertical ones (4 directions at most, no arterials)
+- the concept of blocks was ignored (it does not matter at all)
+- a lot takes up exactly 1 unit (no need for merging and splitting)
+- a lot only holds population as its attribute (jobs are similar to population)
 - ...

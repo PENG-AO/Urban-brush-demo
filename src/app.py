@@ -1,6 +1,7 @@
 # app
 
 import tkinter as tk
+from tkinter import ttk
 from tkinter import filedialog
 import pickle
 
@@ -38,65 +39,63 @@ class App(object):
         self.outerRadius = tk.IntVar(value=6)
         self.brushAmount = tk.IntVar(value=20)
 
-        self.infoLabel = tk.StringVar('')
+        self.infoLabel = tk.StringVar(value='')
+        self.innerRadiusLabel = tk.StringVar(value=f'inner radius: {self.innerRadius.get()}')
+        self.outerRadiusLabel = tk.StringVar(value=f'outer radius: {self.outerRadius.get()}')
+        self.brushAmountLabel = tk.StringVar(value=f'brush amount: {self.brushAmount.get()}%')
 
         self.createControlPad(self.root)
         self.createCanvas(self.root)
     
     def createControlPad(self, master) -> None:
-        controlPad = tk.Frame(master)
+        controlPad = ttk.Frame(master)
         self.createGlobalPad(controlPad)
         self.createDisplayPad(controlPad)
-        self.createLayoutPad(controlPad)
-        self.createBrushTypePad(controlPad)
-        self.createBrushAttrPad(controlPad)
-        tk.Label(controlPad, textvariable=self.infoLabel).pack()
+        self.createBrushPad(controlPad)
+        ttk.Label(controlPad, textvariable=self.infoLabel).pack()
         controlPad.pack(anchor='n', side=tk.LEFT, padx=10, pady=10)
     
     def createGlobalPad(self, master) -> None:
-        globalPad = tk.LabelFrame(master, text='global')
-        tk.Button(globalPad, text='load', command=self.loadButton).pack(fill=tk.X)
-        tk.Button(globalPad, text='save', command=self.saveButton).pack(fill=tk.X)
-        tk.Button(globalPad, text='rand', command=self.randButton).pack(fill=tk.X)
+        globalPad = ttk.Labelframe(master, text='global')
+        ttk.Button(globalPad, text='load', command=self.loadButton).pack(fill=tk.X)
+        ttk.Button(globalPad, text='save', command=self.saveButton).pack(fill=tk.X)
+        ttk.Button(globalPad, text='rand', command=self.randButton).pack(fill=tk.X)
         globalPad.pack(fill=tk.X, padx=5, pady=5)
     
     def createDisplayPad(self, master) -> None:
-        displayPad = tk.LabelFrame(master, text='display')
-        tk.Radiobutton(displayPad, text='2d mode', variable=self.show3d, value=False, command=self.renderCanvas).pack(anchor='w')
-        tk.Radiobutton(displayPad, text='3d mode', variable=self.show3d, value=True, command=self.renderCanvas).pack(anchor='w')
+        displayPad = ttk.Labelframe(master, text='display')
+        ttk.Radiobutton(displayPad, text='2d mode', variable=self.show3d, value=False, command=self.renderCanvas).pack(anchor=tk.W)
+        ttk.Radiobutton(displayPad, text='3d mode', variable=self.show3d, value=True, command=self.renderCanvas).pack(anchor=tk.W)
+        ttk.Separator(displayPad, orient=tk.HORIZONTAL).pack(fill=tk.BOTH, padx=5, pady=5)
+        ttk.Checkbutton(displayPad, text='lots', variable=self.showLot, command=self.renderCanvas).pack(anchor=tk.W)
+        ttk.Checkbutton(displayPad, text='roads', variable=self.showRoad, command=self.renderCanvas).pack(anchor=tk.W)
         displayPad.pack(fill=tk.X, padx=5, pady=5)
-
-    def createLayoutPad(self, master) -> None:
-        layoutPad = tk.LabelFrame(master, text='layout')
-        tk.Checkbutton(layoutPad, text='lots', variable=self.showLot, command=self.renderCanvas).pack(anchor='w')
-        tk.Checkbutton(layoutPad, text='roads', variable=self.showRoad, command=self.renderCanvas).pack(anchor='w')
-        layoutPad.pack(fill=tk.X, padx=5, pady=5)
     
-    def createBrushTypePad(self, master) -> None:
-        brushTypePad = tk.LabelFrame(master, text='brush type')
-        tk.Radiobutton(brushTypePad, text='repulse', variable=self.brushType, value=App.BRUSH_TYPE_REPULSE).pack(anchor='w')
-        tk.Radiobutton(brushTypePad, text='attract', variable=self.brushType, value=App.BRUSH_TYPE_ATTRACT).pack(anchor='w')
-        tk.Radiobutton(brushTypePad, text='drag', variable=self.brushType, value=App.BRUSH_TYPE_DRAG).pack(anchor='w')
-        tk.Radiobutton(brushTypePad, text='break', variable=self.brushType, value=App.BRUSH_TYPE_BREAK).pack(anchor='w')
-        tk.Radiobutton(brushTypePad, text='connect', variable=self.brushType, value=App.BRUSH_TYPE_CONNECT).pack(anchor='w')
-        brushTypePad.pack(fill=tk.X, padx=5, pady=5)
+    def createBrushPad(self, master) -> None:
+        brushPad = ttk.Labelframe(master, text='brushes')
+        ttk.Radiobutton(brushPad, text='repulse', variable=self.brushType, value=App.BRUSH_TYPE_REPULSE).pack(anchor=tk.W)
+        ttk.Radiobutton(brushPad, text='attract', variable=self.brushType, value=App.BRUSH_TYPE_ATTRACT).pack(anchor=tk.W)
+        ttk.Radiobutton(brushPad, text='drag', variable=self.brushType, value=App.BRUSH_TYPE_DRAG).pack(anchor=tk.W)
+        ttk.Radiobutton(brushPad, text='break', variable=self.brushType, value=App.BRUSH_TYPE_BREAK).pack(anchor=tk.W)
+        ttk.Radiobutton(brushPad, text='connect', variable=self.brushType, value=App.BRUSH_TYPE_CONNECT).pack(anchor=tk.W)
+        ttk.Separator(brushPad, orient=tk.HORIZONTAL).pack(fill=tk.BOTH, padx=5, pady=5)
+        ttk.Label(brushPad, textvariable=self.innerRadiusLabel).pack(anchor=tk.W)
+        ttk.Scale(
+            brushPad, variable=self.innerRadius, from_=1, to=max(App.LOT_ROWS, App.LOT_COLS), orient=tk.HORIZONTAL, length=200,
+            command=lambda _: self.innerRadiusLabel.set(f'inner radius: {self.innerRadius.get()}')
+        ).pack(padx=5)
+        ttk.Label(brushPad, textvariable=self.outerRadiusLabel).pack(anchor=tk.W)
+        ttk.Scale(
+            brushPad, variable=self.outerRadius, from_=1, to=max(App.LOT_ROWS, App.LOT_COLS), orient=tk.HORIZONTAL, length=200,
+            command=lambda _: self.outerRadiusLabel.set(f'outer radius: {self.outerRadius.get()}')
+        ).pack(padx=5)
+        ttk.Label(brushPad, textvariable=self.brushAmountLabel).pack(anchor=tk.W)
+        ttk.Scale(
+            brushPad, variable=self.brushAmount, from_=0, to=100, orient=tk.HORIZONTAL, length=200,
+            command=lambda _: self.brushAmountLabel.set(f'brush amount: {self.brushAmount.get()}%')
+        ).pack(padx=5)
+        brushPad.pack(fill=tk.X, padx=5, pady=5)
     
-    def createBrushAttrPad(self, master) -> None:
-        brushAttrPad = tk.LabelFrame(master, text='brush attribute')
-        tk.Scale(
-            brushAttrPad, label='inner radius', variable=self.innerRadius,
-            from_=1, to=max(App.LOT_ROWS, App.LOT_COLS), orient=tk.HORIZONTAL, length=200
-        ).pack()
-        tk.Scale(
-            brushAttrPad, label='outer radius', variable=self.outerRadius,
-            from_=1, to=max(App.LOT_ROWS, App.LOT_COLS), orient=tk.HORIZONTAL, length=200
-        ).pack()
-        tk.Scale(
-            brushAttrPad, label='brush amount', variable=self.brushAmount,
-            from_=0, to=100, resolution=5, orient=tk.HORIZONTAL, length=200
-        ).pack()
-        brushAttrPad.pack(fill=tk.X, padx=5, pady=5)
-
     def createCanvas(self, master) -> None:
         # (3, 3) -- (802, 802)
         size = max(App.CANVAS_H, App.CANVAS_W)

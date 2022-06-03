@@ -37,13 +37,13 @@ class View2d(object):
         canvas.delete('innerCircle')
         innerRadius = self.master.innerRadius.get() * self.master.LOT_SIZE
         x, y = self.rightClickPos if brushType == self.master.BRUSH_TYPE_DRAG and self.rightClickPos else (event.x, event.y)
-        canvas.create_oval(x - innerRadius, y - innerRadius, x + innerRadius, y + innerRadius, outline='red', width=3, dash=(3, 6), tags='innerCircle')
+        canvas.create_oval(x - innerRadius, y - innerRadius, x + innerRadius, y + innerRadius, outline='#3583f7', width=3, dash=(3, 6), tags='innerCircle')
         # plot the outer circle
         canvas.delete('outerCircle')
         if brushType == self.master.BRUSH_TYPE_BREAK: return
         outerRadius = self.master.outerRadius.get() * self.master.LOT_SIZE
         x, y = (event.x, event.y)
-        canvas.create_oval(x - outerRadius, y - outerRadius, x + outerRadius, y + outerRadius, outline='red', width=3, dash=(3, 9), tags='outerCircle')
+        canvas.create_oval(x - outerRadius, y - outerRadius, x + outerRadius, y + outerRadius, outline='#3583f7', width=3, dash=(3, 9), tags='outerCircle')
     
     def leftClick(self, event: tk.Event) -> None:
         self.leftClickPos = (event.x, event.y)
