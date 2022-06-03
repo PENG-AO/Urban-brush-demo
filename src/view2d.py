@@ -1,6 +1,9 @@
 # 2d view
 
+from random import shuffle
 import tkinter as tk
+
+from src.util import flatten
 
 class View2d(object):
 
@@ -19,14 +22,25 @@ class View2d(object):
     def render(self) -> None:
         canvas = self.master.canvas
         canvas.delete('all')
-        rows, cols = self.master.LOT_ROWS, self.master.LOT_COLS
-        for row, col in ((i, j) for i in range(rows) for j in range(cols)):
-            lot = self.master.grid.lots[row][col]
+        lotList = flatten(self.master.grid.lots)
+        def drawPolygon(lot) -> None:
             if self.master.showLot.get():
                 canvas.create_rectangle(lot.bodyRect, fill=lot.color, width=0)
             if self.master.showRoad.get():
                 for roadRect, focused in lot.roadRect:
                     canvas.create_rectangle(roadRect, fill='magenta' if focused else 'black', width=0)
+        def renderJob() -> None:
+            if lotList:
+                drawPolygon(lotList.pop())
+                canvas.after(1, renderJob)
+            else:
+                canvas.after_cancel(job)
+        if self.master.showAnimation.get():
+            shuffle(lotList)
+            job = canvas.after(1, renderJob)
+        else:
+            for lot in lotList:
+                drawPolygon(lot)
     
     def mouseMove(self, event: tk.Event) -> None:
         self.master.infoLabel.set(f'mouse at {event.x}, {event.y}')

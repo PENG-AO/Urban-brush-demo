@@ -33,6 +33,7 @@ class App(object):
         self.show3d = tk.BooleanVar(value=False)
         self.showLot = tk.BooleanVar(value=True)
         self.showRoad = tk.BooleanVar(value=True)
+        self.showAnimation = tk.BooleanVar(value=False)
 
         self.brushType = tk.IntVar(value=-1)
         self.innerRadius = tk.IntVar(value=3)
@@ -69,10 +70,13 @@ class App(object):
         ttk.Separator(displayPad, orient=tk.HORIZONTAL).pack(fill=tk.BOTH, padx=5, pady=5)
         ttk.Checkbutton(displayPad, text='lots', variable=self.showLot, command=self.renderCanvas).pack(anchor=tk.W)
         ttk.Checkbutton(displayPad, text='roads', variable=self.showRoad, command=self.renderCanvas).pack(anchor=tk.W)
+        ttk.Separator(displayPad, orient=tk.HORIZONTAL).pack(fill=tk.BOTH, padx=5, pady=5)
+        ttk.Checkbutton(displayPad, text='animated', variable=self.showAnimation).pack(anchor=tk.W)
         displayPad.pack(fill=tk.X, padx=5, pady=5)
     
     def createBrushPad(self, master) -> None:
         brushPad = ttk.Labelframe(master, text='brushes')
+        ttk.Radiobutton(brushPad, text='none', variable=self.brushType, value=-1).pack(anchor=tk.W)
         ttk.Radiobutton(brushPad, text='repulse', variable=self.brushType, value=App.BRUSH_TYPE_REPULSE).pack(anchor=tk.W)
         ttk.Radiobutton(brushPad, text='attract', variable=self.brushType, value=App.BRUSH_TYPE_ATTRACT).pack(anchor=tk.W)
         ttk.Radiobutton(brushPad, text='drag', variable=self.brushType, value=App.BRUSH_TYPE_DRAG).pack(anchor=tk.W)

@@ -27,12 +27,11 @@ python3 main.py
 
 ## 3.2 preview mode
 
-- Users may preview the layout in both 2D mode and 3D mode by switching between the corresponding radio buttons.
-- However, operations are only permitted under 3D mode.
+- Users may preview the layout in both 2D mode and 3D mode by switching between the corresponding radio buttons, and choose to hide lots or roads in the 2d preview mode by checking the corresponding checkboxes.
+- However, brush operations are only permitted under 2D mode.
+- By selecting the "animated" button, the layout will be rendered as a series of animations, which is only recommended for displaying.
 
 ### 3.2.1 2d preview mode
-
-- Users may choose to hide lots or roads in the 2d preview mode by checking the corresponding checkboxes.
 
 ![preview-2d](preview-2d.png)
 

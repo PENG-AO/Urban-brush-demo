@@ -4,7 +4,7 @@ from math import degrees
 import numpy as np
 import tkinter as tk
 
-from src.util import buildProjectionMat4, buildTranslationMat4, distance
+from src.util import buildProjectionMat4, buildTranslationMat4, distance, flatten
 
 class View3d(object):
 
@@ -42,9 +42,7 @@ class View3d(object):
         )
         # iterate lots
         meshes = list()
-        rows, cols = self.master.LOT_ROWS, self.master.LOT_COLS
-        for row, col in ((i, j) for i in range(rows) for j in range(cols)):
-            lot = self.master.grid.lots[row][col]
+        for lot in flatten(self.master.grid.lots):
             mesh = [[
                 project.dot(trans.dot(switchYZ.dot(v))) for v in surface
             ] for surface in lot.mesh(
@@ -61,13 +59,24 @@ class View3d(object):
                 lot.population, lot.color
             ) for surface in mesh])
         # render
-        meshes.sort(key=lambda x: x[1])
-        for (v1, v2, v3, v4), _, population, color in meshes:
+        def drawPolygon(v1: tuple, v2: tuple, v3: tuple, v4: tuple, population: int, color: str) -> None:
             canvas.create_polygon(
-                *v1, *v2, *v3, *v4,
-                fill=color, width=1,
+                *v1, *v2, *v3, *v4, fill=color, width=1,
                 outline='black' if population < lot.POPULATION_MAX * 0.618 else 'grey'
             )
+        def renderJob() -> None:
+            if meshes:
+                (v1, v2, v3, v4), _, population, color = meshes.pop()
+                drawPolygon(v1, v2, v3, v4, population, color)
+                canvas.after(1, renderJob)
+            else:
+                canvas.after_cancel(job)
+        meshes.sort(key=lambda x: x[1], reverse=self.master.showAnimation.get())
+        if self.master.showAnimation.get():
+            job = canvas.after(1, renderJob)
+        else:
+            for (v1, v2, v3, v4), _, population, color in meshes:
+                drawPolygon(v1, v2, v3, v4, population, color)
 
     def mouseMove(self, event: tk.Event) -> None:
         self.master.infoLabel.set(f'mouse at {event.x}, {event.y}\nview angle is {degrees(View3d.VIEW_ANGLE):.2f}')
